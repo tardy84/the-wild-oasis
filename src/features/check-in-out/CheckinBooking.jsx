@@ -1,20 +1,19 @@
 import styled from "styled-components";
-import BookingDataBox from "../../features/bookings/BookingDataBox";
+import { useBooking } from "../bookings/useBooking";
+import { useEffect, useState } from "react";
+import { formatCurrency } from "../../utils/helpers";
+import { useCheckIn } from "./useCheckin";
+import { useSettings } from "../settings/useSettings";
+import { useNavigate } from "react-router-dom";
 
+import BookingDataBox from "../../features/bookings/BookingDataBox";
 import Row from "../../ui/Row";
 import Heading from "../../ui/Heading";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
-
-import { useMoveBack } from "../../hooks/useMoveBack";
-import { useBooking } from "../bookings/useBooking";
 import Spinner from "../../ui/Spinner";
-import { useEffect, useState } from "react";
 import Checkbox from "../../ui/Checkbox";
-import { formatCurrency } from "../../utils/helpers";
-import { useCheckIn } from "./useCheckin";
-import { useSettings } from "../settings/useSettings";
 
 const Box = styled.div`
   /* Box */
@@ -29,15 +28,10 @@ function CheckinBooking() {
   const [addBreakfast, setAddBreakfast] = useState(false);
   const { booking, isLoading } = useBooking();
   const { settings, isLoading: isLoadingSettings } = useSettings();
-  console.log(settings);
+  const navigate = useNavigate();
 
-  useEffect(
-    () => setConfirmPaid(booking?.isPaid ?? false),
-    [booking],
-    setConfirmPaid
-  );
+  useEffect(() => setConfirmPaid(booking?.isPaid ?? false), [booking]);
 
-  const moveBack = useMoveBack();
   const { checkIn, isCheckingIn } = useCheckIn();
 
   if (isLoading || isLoadingSettings) return <Spinner />;
@@ -74,7 +68,6 @@ function CheckinBooking() {
     <>
       <Row type="horizontal">
         <Heading as="h1">Check in booking #{bookingId}</Heading>
-        <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
 
       <BookingDataBox booking={booking} />
@@ -114,7 +107,7 @@ function CheckinBooking() {
         <Button onClick={handleCheckin} disabled={!confirmPaid || isCheckingIn}>
           Check in booking #{bookingId}
         </Button>
-        <Button variation="secondary" onClick={moveBack}>
+        <Button variation="secondary" onClick={() => navigate(-1)}>
           Back
         </Button>
       </ButtonGroup>

@@ -7,6 +7,7 @@ function DarkModeProvider({ children }) {
   const [isDarkMode, setIsDarkMode] = useLocalStorageState(
     window.matchMedia("(prefers-color-scheme: dark)").matches,
     "isDarkMode"
+    //use System darkmode as default
   );
 
   useEffect(
@@ -23,7 +24,6 @@ function DarkModeProvider({ children }) {
   );
 
   function toggleDarkMode() {
-    console.log(isDarkMode);
     setIsDarkMode((isDark) => !isDark);
   }
 

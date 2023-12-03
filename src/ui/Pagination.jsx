@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import { useSearchParams } from "react-router-dom";
 import { PAGE_SIZE } from "../utils/constants";
+import { useState } from "react";
 
 const StyledPagination = styled.div`
   width: 100%;
@@ -65,7 +66,16 @@ function Pagination({ count }) {
     ? 1
     : Number(searchParams.get("page"));
 
-  const pageCount = Math.ceil(count / PAGE_SIZE);
+  const [pageSize, setPageSize] = useState(
+    !searchParams.get("pageSize")
+      ? PAGE_SIZE
+      : Number(searchParams.get("pageSize"))
+  );
+  const pageSizeToDisplay = !searchParams.get("pageSize")
+    ? Math.ceil(count / pageSize)
+    : Number(searchParams.get("pageSize"));
+
+  const pageCount = Math.ceil(count / pageSizeToDisplay);
 
   function nextPage() {
     const next = currentPage === pageCount ? currentPage : currentPage + 1;
@@ -79,17 +89,36 @@ function Pagination({ count }) {
     setSearchParams(searchParams);
   }
 
+  function handleChangePageSize(e) {
+    setPageSize(e.target.value);
+    searchParams.set("pageSize", e.target.value);
+    searchParams.set("page", 1);
+    setSearchParams(searchParams);
+  }
+
   if (pageCount <= 1) return null;
   return (
     <StyledPagination>
       <P>
-        Showing <span>{(currentPage - 1) * PAGE_SIZE + 1}</span> to{" "}
+        Showing <span>{(currentPage - 1) * pageSizeToDisplay + 1}</span> to{" "}
         <span>
-          {currentPage === pageCount ? count : currentPage * PAGE_SIZE}
+          {currentPage === pageCount ? count : currentPage * pageSizeToDisplay}
         </span>{" "}
         of <span>{count}</span> results
       </P>
-
+      <P>
+        <span>Page Size </span>
+        <select
+          onChange={(e) => handleChangePageSize(e)}
+          name="pageSize"
+          value={pageSize}
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={15}>15</option>
+          <option value={20}>20</option>
+        </select>
+      </P>
       <Buttons>
         <PaginationButton onClick={previousPage} disabled={currentPage === 1}>
           <HiChevronLeft /> <span>Previous</span>

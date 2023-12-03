@@ -1,3 +1,9 @@
+import { Controller, useForm } from "react-hook-form";
+import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
+import { useRef } from "react";
+import toast from "react-hot-toast";
+
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
@@ -5,17 +11,14 @@ import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
-import { useForm } from "react-hook-form";
-import { useCreateCabin } from "./useCreateCabin";
-import { useEditCabin } from "./useEditCabin";
-import toast from "react-hot-toast";
-
 function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
-  const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: isEditSession ? editValues : {},
-  });
+  const { control, register, handleSubmit, reset, getValues, formState } =
+    useForm({
+      defaultValues: isEditSession ? editValues : {},
+    });
+  const editorRef = useRef(null);
   const { errors } = formState;
 
   const { isCreating, createCabin } = useCreateCabin();
@@ -111,18 +114,21 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
       </FormRow>
 
       <FormRow
-        label="Description for website"
+        label="Description for cabin"
         error={errors?.description?.message}
       >
-        <Textarea
-          disabled={isWorking}
-          type="number"
-          id="description"
-          defaultValue=""
-          {...register("description", {
-            required: "This field is required",
-          })}
-        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <Textarea
+              onInit={(editor) => (editorRef.current = editor)}
+              defaultValue={getValues().description}
+              disabled={isWorking}
+              onChange={onChange}
+            />
+          )}
+        ></Controller>
       </FormRow>
 
       <FormRow label="Cabin photo">

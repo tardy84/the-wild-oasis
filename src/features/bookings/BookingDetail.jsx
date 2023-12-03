@@ -1,3 +1,8 @@
+import { useBooking } from "./useBooking";
+import { HiArrowDownOnSquare, HiArrowUpOnSquare } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
+import { useCheckOut } from "../check-in-out/useCheckOut";
+import { useDeleteBooking } from "./useDeleteBooking";
 import styled from "styled-components";
 
 import BookingDataBox from "./BookingDataBox";
@@ -6,14 +11,7 @@ import Heading from "../../ui/Heading";
 import Tag from "../../ui/Tag";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
-
-import { useMoveBack } from "../../hooks/useMoveBack";
-import { useBooking } from "./useBooking";
 import Spinner from "../../ui/Spinner";
-import { HiArrowDownOnSquare, HiArrowUpOnSquare } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
-import { useCheckOut } from "../check-in-out/useCheckOut";
-import { useDeleteBooking } from "./useDeleteBooking";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import Empty from "../../ui/Empty";
@@ -29,8 +27,6 @@ function BookingDetail() {
   const { booking, isLoading } = useBooking();
   const { checkOut, isCheckingOut } = useCheckOut();
   const { deleteBooking, isLoading: isDeleting } = useDeleteBooking();
-
-  const moveBack = useMoveBack();
 
   if (isLoading) return <Spinner />;
   if (!booking) return <Empty resourceName="booking" />;
@@ -60,7 +56,7 @@ function BookingDetail() {
             variation="danger"
             onClick={() => {
               deleteBooking(bookingId);
-              moveBack();
+              navigate(-1);
             }}
           >
             Delete
@@ -84,7 +80,7 @@ function BookingDetail() {
             Check out
           </Button>
         )}
-        <Button variation="secondary" onClick={moveBack}>
+        <Button variation="secondary" onClick={() => navigate(-1)}>
           Back
         </Button>
       </ButtonGroup>

@@ -1,5 +1,5 @@
-import Button from "../../ui/Button";
 import { useCheckOut } from "./useCheckOut";
+import Button from "../../ui/Button";
 
 function CheckoutButton({ bookingId }) {
   const { checkOut, isCheckingOut } = useCheckOut();

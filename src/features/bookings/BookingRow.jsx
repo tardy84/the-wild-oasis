@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { format, isToday } from "date-fns";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
@@ -7,17 +6,18 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 
-import Tag from "../../ui/Tag";
-import Table from "../../ui/Table";
-import Menus from "../../ui/Menus";
-import Modal from "../../ui/Modal";
-import ConfirmDelete from "../../ui/ConfirmDelete";
-
+import { format, isToday } from "date-fns";
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
 import { useNavigate } from "react-router-dom";
 import { useCheckOut } from "../check-in-out/useCheckOut";
 import { useDeleteBooking } from "./useDeleteBooking";
+
+import Tag from "../../ui/Tag";
+import Table from "../../ui/Table";
+import Menus from "../../ui/Menus";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -71,14 +71,16 @@ function BookingRow({
   const { checkOut, isCheckingOut } = useCheckOut();
   return (
     <Table.Row>
-      <Cabin>{cabinName}</Cabin>
+      <Cabin onClick={() => navigate(`/bookings/${bookingId}`)}>
+        {cabinName}
+      </Cabin>
 
-      <Stacked>
+      <Stacked onClick={() => navigate(`/bookings/${bookingId}`)}>
         <span>{guestName}</span>
         <span>{email}</span>
       </Stacked>
 
-      <Stacked>
+      <Stacked onClick={() => navigate(`/bookings/${bookingId}`)}>
         <span>
           {isToday(new Date(startDate))
             ? "Today"
@@ -105,6 +107,7 @@ function BookingRow({
             >
               See Details
             </Menus.Button>
+
             {status === "unconfirmed" && (
               <Menus.Button
                 onClick={() => navigate(`/checkin/${bookingId}`)}
@@ -113,6 +116,7 @@ function BookingRow({
                 Check in
               </Menus.Button>
             )}
+
             {status === "checked-in" && (
               <Menus.Button
                 onClick={() => checkOut(bookingId)}
@@ -122,6 +126,7 @@ function BookingRow({
                 Check out
               </Menus.Button>
             )}
+
             <Modal.Open opens="delete">
               <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
             </Modal.Open>
